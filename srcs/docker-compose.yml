@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/html:/var/www/html
+      - ./nginx/ssl:/etc/ssl
+      - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf
+    depends_on:
+      - wordpress
+    networks:
+      - webnet
+    restart: always  # Correct way to set restart policy
+
+  wordpress:
+    image: wordpress:php7.4-fpm-alpine
+    volumes:
+      - wordpress-data:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_password
+      WORDPRESS_DB_NAME: wp_db
+    networks:
+      - webnet
+    restart: always  # Correct way to set restart policy
+
+  db:
+    image: mariadb:latest
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: wp_db
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
+    networks:
+      - webnet
+    restart: always  # Correct way to set restart policy
+
+networks:
+  webnet:
+
+volumes:
+  wordpress-data:
+  db-data:
