@@ -13,7 +13,7 @@ mariadb -e "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYS
 
 # Grant privileges to user
 mariadb -e "GRANT ALL PRIVILEGES ON ${MYSQL_DB}.* TO \`${MYSQL_USER}\`@'%';"
- 
+
 # Flush privileges to apply changes
 mariadb -e "FLUSH PRIVILEGES;"
 

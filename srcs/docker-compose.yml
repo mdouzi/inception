@@ -1,50 +1,61 @@
-version: '3.8'
+version: "3.8"
 
 services:
+  mariadb:
+    image: mariadb:user
+    container_name: mariadb
+    build: ./mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - inception
+    restart: always
+
   nginx:
-    build:
-      context: ./nginx
+    image: nginx:user
+    container_name: nginx
+    build: ./nginx
     ports:
       - "443:443"
-    volumes:
-      - ./nginx/html:/var/www/html
-      - ./nginx/ssl:/etc/ssl
-      - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf
     depends_on:
       - wordpress
+    volumes:
+      - wordpress:/var/www/wordpress
     networks:
-      - webnet
-    restart: always  # Correct way to set restart policy
+      - inception
+    restart: always
 
   wordpress:
-    image: wordpress:php7.4-fpm-alpine
+    image: wordpress:user
+    container_name: wordpress
+    build: ./wordpress
+    depends_on:
+      - mariadb
     volumes:
-      - wordpress-data:/var/www/html
-    environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: wp_user
-      WORDPRESS_DB_PASSWORD: wp_password
-      WORDPRESS_DB_NAME: wp_db
+      - wordpress:/var/www/wordpress
+    env_file:
+      - .env
     networks:
-      - webnet
-    restart: always  # Correct way to set restart policy
-
-  db:
-    image: mariadb:latest
-    volumes:
-      - db-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: wp_db
-      MYSQL_USER: wp_user
-      MYSQL_PASSWORD: wp_password
-    networks:
-      - webnet
-    restart: always  # Correct way to set restart policy
-
-networks:
-  webnet:
+      - inception
+    restart: always
 
 volumes:
-  wordpress-data:
-  db-data:
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mdouzi/data/mariadb
+      o: bind
+
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/mdouzi/data/wordpress
+      o: bind
+
+networks:
+  inception:
+    name: inception
