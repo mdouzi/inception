@@ -1,51 +1,51 @@
-WP_DATA = /home/mdouzi/data/wordpress/ #define the path to the wordpress data
-DB_DATA = /home/mdouzi/data/mariadb/ #define the path to the mariadb data
+# Define paths for WordPress and MariaDB data
+WP_DATA = /home/mdouzi/data/wordpress/
+DB_DATA = /home/mdouzi/data/mariadb/
 
-
-# default target
+# Default target
 all: up
 
-# start the biulding process
-# create the wordpress and mariadb data directories.
-# start the containers in the background and leaves them running
+# Start the building process
 up: build
 	@mkdir -p $(WP_DATA)
 	@mkdir -p $(DB_DATA)
 	docker-compose -f ./srcs/docker-compose.yml up -d
 
-# stop the containers
+# Stop the containers
 down:
 	docker-compose -f ./srcs/docker-compose.yml down
 
-# stop the containers
+# Stop the containers
 stop:
 	docker-compose -f ./srcs/docker-compose.yml stop
 
-# start the containers
+# Start the containers
 start:
 	docker-compose -f ./srcs/docker-compose.yml start
 
-# build the containers
+# Build the containers
 build:
 	docker-compose -f ./srcs/docker-compose.yml build
 
-# clean the containers
-# stop all running containers and remove them.
-# remove all images, volumes and networks.
-# remove the wordpress and mariadb data directories.
-# the (|| true) is used to ignore the error if there are no containers running to prevent the make command from stopping.
+# Clean the containers and data
 clean:
-	@docker stop $$(docker ps -qa) || true
-	@docker rm $$(docker ps -qa) || true
-	@docker rmi -f $$(docker images -qa) || true
+	@echo "Stopping and removing containers..."
+	@docker-compose -f ./srcs/docker-compose.yml down -v || true
+	@echo "Removing images..."
+	@docker rmi -f $$(docker images -q) || true
+	@echo "Removing volumes..."
 	@docker volume rm $$(docker volume ls -q) || true
+	@echo "Removing networks..."
 	@docker network rm $$(docker network ls -q) || true
-	@rm -rf $(WP_DATA) || false
-	@rm -rf $(DB_DATA) || false
+	@echo "Removing WordPress data..."
+	@sudo rm -rf $(WP_DATA) || true
+	@echo "Removing MariaDB data..."
+	@sudo rm -rf $(DB_DATA) || true
 
-# clean and start the containers
+# Clean and start the containers
 re: clean up
 
-# prune the containers: execute the clean target and remove all containers, images, volumes and networks from the system.
+# Prune the Docker system
 prune: clean
+	@echo "Pruning Docker system..."
 	@docker system prune -a --volumes -f
