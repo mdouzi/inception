@@ -9,7 +9,7 @@ all: up
 up: build
 	@mkdir -p $(WP_DATA)
 	@mkdir -p $(DB_DATA)
-	docker-compose -f ./srcs/docker-compose.yml up -d
+	docker-compose -f ./srcs/docker-compose.yml up -d 
 
 # Stop the containers
 down:
@@ -37,14 +37,17 @@ clean:
 	@docker volume rm $$(docker volume ls -q) || true
 	@echo "Removing networks..."
 	@docker network rm $$(docker network ls -q) || true
+# Clean and start the containers
+re: clean up
+
+restart: clean remove
+
+remove:
 	@echo "Removing WordPress data..."
 	@sudo rm -rf $(WP_DATA) || true
 	@echo "Removing MariaDB data..."
 	@sudo rm -rf $(DB_DATA) || true
-
-# Clean and start the containers
-re: clean up
-
+ 
 # Prune the Docker system
 prune: clean
 	@echo "Pruning Docker system..."
