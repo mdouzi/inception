@@ -25,22 +25,23 @@ chmod -R 755 /var/www/wordpress
 #---------------------------------------------------#
 
 # Function to check MariaDB status
-wait_for_mariadb() {
+check_mariadb() {
     for i in {1..20}; do
         if nc -z mariadb 3306; then
-            echo "[SUCCESS] MariaDB is up and running on port 3306. Proceeding with WordPress installation..."
+            echo "[SUCCESS] MariaDB is accepting connections on port 3306. Proceeding with WordPress installation..."
             return 0
         fi
         echo "[INFO] Attempt $i: MariaDB is not ready yet. Waiting for 1 second before retrying..."
         sleep 1
     done
-    echo "[ERROR] MariaDB did not start within 20 seconds. Please check the MariaDB container logs for more details."
+    echo "[ERROR] MariaDB did not become available within 20 seconds. Please check the MariaDB container logs for more details."
     exit 1
 }
 
 
+
 # Call the function
-wait_for_mariadb
+check_mariadb
 
 #---------------------------------------------------#
 #               WordPress Installation              #

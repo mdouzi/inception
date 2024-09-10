@@ -30,6 +30,8 @@ build:
 # Clean the containers and data
 clean:
 	@echo "Stopping and removing containers..."
+	@docker stop $$(docker ps -q) || true
+	@docker rm $$(docker ps -a -q) || true
 	@docker-compose -f ./srcs/docker-compose.yml down -v || true
 	@echo "Removing images..."
 	@docker rmi -f $$(docker images -q) || true
@@ -37,6 +39,7 @@ clean:
 	@docker volume rm $$(docker volume ls -q) || true
 	@echo "Removing networks..."
 	@docker network rm $$(docker network ls -q) || true
+
 # Clean and start the containers
 re: clean up
 
@@ -47,7 +50,7 @@ remove:
 	@sudo rm -rf $(WP_DATA) || true
 	@echo "Removing MariaDB data..."
 	@sudo rm -rf $(DB_DATA) || true
- 
+
 # Prune the Docker system
 prune: clean
 	@echo "Pruning Docker system..."
