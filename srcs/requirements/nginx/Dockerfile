@@ -5,8 +5,6 @@ FROM debian:bullseye-slim
 RUN apt-get update && apt-get install -y \
     nginx \
     openssl
-    # && apt-get clean \
-    # && rm -rf /var/lib/apt/lists/*
 
 # Create a directory to store SSL certificates
 RUN mkdir -p /etc/nginx/ssl
