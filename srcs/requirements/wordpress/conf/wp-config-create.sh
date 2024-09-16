@@ -26,7 +26,7 @@ chmod -R 755 /var/www/wordpress
 
 # Function to check MariaDB status
 check_mariadb() {
-    for i in {1..20}; do
+    for i in {1..30}; do
         if nc -z mariadb 3306; then
             echo "[SUCCESS] MariaDB is accepting connections on port 3306. Proceeding with WordPress installation..."
             return 0

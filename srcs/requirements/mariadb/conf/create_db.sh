@@ -3,7 +3,7 @@
 #              mariadb start                        #
 #---------------------------------------------------#
 service mariadb start # start mariadb
-sleep 5 # wait for mariadb to start
+sleep 5 
 
 
 # Create database if not exists

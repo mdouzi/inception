@@ -1,4 +1,3 @@
-# Define paths for WordPress and MariaDB data
 WP_DATA = /home/mdouzi/data/wordpress/
 DB_DATA = /home/mdouzi/data/mariadb/
 

@@ -16,10 +16,6 @@ openssl genpkey -algorithm RSA -out $KEY_FILE
 # Generate the self-signed certificate
 openssl req -new -key $KEY_FILE -x509 -out $CERT_FILE -days $DAYS_VALID -subj "/CN=$DOMAIN"
 
-# Output the locations of the generated files
-echo "SSL Certificate generated:"
-echo "Private Key: $KEY_FILE"
-echo "Certificate: $CERT_FILE"
 
 
 
